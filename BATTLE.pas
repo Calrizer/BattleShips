@@ -3,9 +3,11 @@ program battleships;
 uses crt;
 
 var players : array [1..2] of string;
-position : string;
-playerCoords : array [1..10, 1..10] of string;
-x,y,current:integer;
+position: string;
+playerShips : array [1..10, 1..10] of char;
+computerShips : array [1..10, 1..10] of char;
+x,y,current,line : integer;
+playerWin,computerWin : boolean;
 
 function getX : integer;
 begin
@@ -117,7 +119,7 @@ begin
 	else getY := 0;
 end;
 
-function getPos : integer;
+procedure setShips;
 begin
 	GoToXY(70, 10);
 	write('N/A');
@@ -127,7 +129,7 @@ begin
 		write(current);
 		GotoXY(70,14);
 		readln(position);
-		playerCoords[getX,getY] := 'X';
+		playerShips[getX,getY] := 'S';
 		GoToXY(x,y);
 		write(chr(254));
 		GoToXY(70,14);
@@ -137,23 +139,31 @@ begin
 		GoToXY(70,14);
 	end;
 end;
-begin
-	clrscr;
-	TextColor(White);
 
-	writeln('Welcome to Battleships recruit!');
-    writeln;
-	writeln('Your objective is to destroy all of your opponents ships.');
-	writeln('You are playing against the computer.');
-	writeln('Sink ships by entering coordinates on the board below.');
-    writeln;
-	writeln('"X" means you hit the opponents ship.');
-	writeln('"O" means you missed the opponents ship.');
-        writeln;
-        writeln('Press ENTER to start the game...');
-        readln;
-        clrscr;
-        writeln;
+procedure generateShips;
+begin
+	for current := 1 to 6 do
+	begin
+		x := Random(10) + 1;
+		y := Random(10) + 1;
+		if computerShips[x,y] <> 'S' then computerShips[x,y] := 'S';
+		else current := current - 1;
+	end;
+end;
+
+procedure playerAttempt;
+begin
+	//Code Here
+end;
+
+procedure computerAttempt;
+begin
+	//Code Here
+end;
+
+procedure writeBoard;
+begin
+	writeln;
         writeln('         A   B   C   D   E   F   G   H   I   J');
         writeln('       ÉÍÍÍËÍÍÍËÍÍÍËÍÍÍËÍÍÍËÍÍÍËÍÍÍËÍÍÍËÍÍÍËÍÍÍ»');
         writeln('     1 º   º   º   º   º   º   º   º   º   º   º');
@@ -176,7 +186,45 @@ begin
         writeln('       ÌÍÍÍÎÍÍÍÎÍÍÍÎÍÍÍÎÍÍÍÎÍÍÍÎÍÍÍÎÍÍÍÎÍÍÍÎÍÍÍ¹');
         writeln('    10 º   º   º   º   º   º   º   º   º   º   º');
         writeln('       ÈÍÍÍÊÍÍÍÊÍÍÍÊÍÍÍÊÍÍÍÊÍÍÍÊÍÍÍÊÍÍÍÊÍÍÍÊÍÍÍ¼');
-	getPos;
+end;
+
+procedure clearBoard;
+begin
+	for current := 1 to 50 do
+	begin	
+		GoToXY(1, current);
+		ClrEol;
+		Delay(50);
+	end;
+	GoToXY(25,25);
+	if playerWin := true then write('Congratulations, you defeated the computer!');
+	else write('Game Over! The computer beat you!');
+end;
+
+begin
+	Randomize;
+	clrscr;
+	TextColor(White);
+
+	writeln('Welcome to Battleships recruit!');
+    writeln;
+	writeln('Your objective is to destroy all of your opponents ships.');
+	writeln('You are playing against the computer.');
+	writeln('Sink ships by entering coordinates on the board below.');
+    writeln;
+	writeln('"X" means you hit the opponents ship.');
+	writeln('"O" means you missed the opponents ship.');
+    writeln;
+    writeln('Press ENTER to start the game...');
+    readln;
+    clrscr;
+    writeBoard;    
+	setShips;
+	generateShips;
+	repeat
+		playerAttempt;
+		computerAttempt;
+	until (computerWin := true) xor (playerWin := true);
+	clearBoard;
 	readln;
-	
 end.
